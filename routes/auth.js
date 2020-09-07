@@ -1,6 +1,8 @@
 const express = require("express");
 const Router = require("express").Router;
 const User = require("../models/user");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 
 const router = new Router();
@@ -11,6 +13,19 @@ const router = new Router();
  * Make sure to update their last-login!
  *
  **/
+
+router.post("/login", async function (req, res, next) {
+    try {
+        let {username, password} = req.body
+        if (!username || password) {
+            throw new ExpressError("Please enter username and password", 400)
+        } 
+
+        let result = await authenticate(username, password)
+    } catch (e) {
+        return next(e)
+    }
+})
 
 
 /** POST /register - register user: registers, logs in, and returns token.
