@@ -39,17 +39,27 @@ class User {
       WHERE username=$1`,
       [username]
     )
-    let password = result.rows[0].password
+    let inputPassword = result.rows[0].password
+    return user && (await bcrypt.compare(password, inputPassword));
   }
 
   /** Update last_login_at for user */
 
-  static async updateLoginTimestamp(username) {}
+  static async updateLoginTimestamp(username) {
+    let result = await db.query(
+      `UPDATE users
+        SET last_login_at = current_timestamp
+        WHERE username = $1`,
+        [username] 
+    )
+      console.log(result.statusCode)
+      return result
+  }
 
   /** All: basic info on all users:
    * [{username, first_name, last_name, phone}, ...] */
 
-  static async all() {}
+  static async all() {
 
   /** Get: get user by username
    *
@@ -60,7 +70,28 @@ class User {
    *          join_at,
    *          last_login_at } */
 
-  static async get(username) {}
+   let result = await db.query(
+     `SELECT username,
+             first_name,
+             last_name,
+             phone
+             FROM users`
+   )
+   return result
+  }
+
+  static async get(username) {
+    let result = db.query(
+      `SELECT username, first_name, last_name, phone
+        FROM users
+        WHERE username = $1`,
+        [username]
+      );
+    if (!result.rows[0]) {
+      throw new ExpressError(`No such user: ${username}`, 404);
+    }
+    return result.rows[0]; 
+  }
 
   /** Return messages from this user.
    *
@@ -70,7 +101,17 @@ class User {
    *   {username, first_name, last_name, phone}
    */
 
-  static async messagesFrom(username) {}
+  static async messagesFrom(username) {
+    let result = await db.query(
+      `SELECT username, first_name, last_name, phone
+      FROM users
+      WHERE username=$1
+      JOIN messages
+      ON to_username = username`, 
+      [username]
+    );
+    return result.rows[0]
+  }
 
   /** Return messages to this user.
    *
@@ -80,7 +121,17 @@ class User {
    *   {id, first_name, last_name, phone}
    */
 
-  static async messagesTo(username) {}
+  static async messagesTo(username) {
+  let result = await db.query(
+    `SELECT username, first_name, last_name, phone
+      FROM users
+      WHERE username=$1
+      JOIN messages
+      ON to_username = username`,
+         [username]
+    );
+    return result.rows[0]; 
+  }
 }
 
 
