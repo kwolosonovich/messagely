@@ -15,4 +15,4 @@ let db = new Client({
 db.connect();
 
 
-module.exports = {client, db};
+module.exports = {db};

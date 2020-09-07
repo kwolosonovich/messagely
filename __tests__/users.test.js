@@ -37,7 +37,6 @@ describe("Test User class", function () {
     expect(isValid).toBeFalsy();
   });
 
-
   test("can update login timestamp", async function () {
     await db.query("UPDATE users SET last_login_at=NULL WHERE username='test'");
     let u = await User.get("test");
