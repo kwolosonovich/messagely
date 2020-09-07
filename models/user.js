@@ -31,11 +31,16 @@ class User {
     return result.rows[0];
   }
 
-  static async register({ username, password, first_name, last_name, phone }) {}
-
   /** Authenticate: is this username/password valid? Returns boolean. */
 
-  static async authenticate(username, password) {}
+  static async authenticate(username, password) {
+    let result = await db.query(
+    `SELECT password FROM users 
+      WHERE username=$1`,
+      [username]
+    )
+    let password = result.rows[0].password
+  }
 
   /** Update last_login_at for user */
 
