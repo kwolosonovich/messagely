@@ -8,11 +8,17 @@ const { data } = require("./config");
 
 // client.connect();
 
-let db = new Client({
-  database: data,
-});
+// let db = new Client({
+//   database: data,
+// });
 
-db.connect();
+// db.connect();
 
 
-module.exports = {db};
+// module.exports = {db};
+
+const client = new Client(data);
+
+client.connect();
+
+module.exports = client;
