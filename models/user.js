@@ -9,10 +9,8 @@ const { BCRYPT_WORK_FACTOR } = require("../config");
 /** User of the site. */
 
 class User {
-  /** register new user -- returns
-   *    {username, password, first_name, last_name, phone}
-   */
-
+  
+  /** register new user */
   static async register({ username, password, first_name, last_name, phone }) {
     let hashedPassword = await bcrypt.hash(password, BCRYPT_WORK_FACTOR);
     const result = await db.query(
@@ -32,105 +30,78 @@ class User {
   }
 
   /** Authenticate: is this username/password valid? Returns boolean. */
-
   static async authenticate(username, password) {
     let result = await db.query(
-    `SELECT password FROM users 
+      `SELECT password FROM users 
       WHERE username=$1`,
       [username]
-    )
-    let inputPassword = result.rows[0].password
+    );
+    let inputPassword = result.rows[0].password;
     return user && (await bcrypt.compare(password, inputPassword));
   }
 
   /** Update last_login_at for user */
-
   static async updateLoginTimestamp(username) {
     let result = await db.query(
       `UPDATE users
         SET last_login_at = current_timestamp
         WHERE username = $1`,
-        [username] 
-    )
-      console.log(result.statusCode)
-      return result
+      [username]
+    );
+    console.log(result.statusCode);
+    return result;
   }
 
-  /** All: basic info on all users:
-   * [{username, first_name, last_name, phone}, ...] */
-
+  /** All: basic info on all users */
   static async all() {
-
-  /** Get: get user by username
-   *
-   * returns {username,
-   *          first_name,
-   *          last_name,
-   *          phone,
-   *          join_at,
-   *          last_login_at } */
-
-   let result = await db.query(
-     `SELECT username,
+    let result = await db.query(
+      `SELECT username,
              first_name,
              last_name,
              phone
              FROM users`
-   )
-   return result
+    );
+    return result;
   }
 
+  /** Get: get user by username */
   static async get(username) {
     let result = db.query(
       `SELECT username, first_name, last_name, phone
         FROM users
         WHERE username = $1`,
-        [username]
-      );
+      [username]
+    );
     if (!result.rows[0]) {
       throw new ExpressError(`No such user: ${username}`, 404);
     }
-    return result.rows[0]; 
+    return result.rows[0];
   }
 
-  /** Return messages from this user.
-   *
-   * [{id, to_user, body, sent_at, read_at}]
-   *
-   * where to_user is
-   *   {username, first_name, last_name, phone}
-   */
-
+  /** Return messages from this user  */
   static async messagesFrom(username) {
     let result = await db.query(
       `SELECT username, first_name, last_name, phone
       FROM users
       WHERE username=$1
       JOIN messages
-      ON to_username = username`, 
+      ON to_username = username`,
       [username]
     );
-    return result.rows[0]
+    return result.rows[0];
   }
 
-  /** Return messages to this user.
-   *
-   * [{id, from_user, body, sent_at, read_at}]
-   *
-   * where from_user is
-   *   {id, first_name, last_name, phone}
-   */
-
+  /** Return messages to this user.*/
   static async messagesTo(username) {
-  let result = await db.query(
-    `SELECT username, first_name, last_name, phone
+    let result = await db.query(
+      `SELECT username, first_name, last_name, phone
       FROM users
       WHERE username=$1
       JOIN messages
       ON to_username = username`,
-         [username]
+      [username]
     );
-    return result.rows[0]; 
+    return result.rows[0];
   }
 }
 
