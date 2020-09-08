@@ -5,11 +5,7 @@ const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 
 const router = new Router();
 
-/** GET / - get list of users.
- *
- * => {users: [{username, first_name, last_name, phone}, ...]}
- *
- **/
+
 router.get("/", ensureLoggedIn, async function (req, res, next) {
   try {
     let users = await User.all();
@@ -19,33 +15,27 @@ router.get("/", ensureLoggedIn, async function (req, res, next) {
   }
 });
 
+router.get("/username/to", ensureLoggedIn, async function (req, res, next) {
+    try {
+        let username = req.params.username
+        if (username) {
+            return Message.get(username)
+        }
+    } catch (e) {
+        return next(e)
+    }
+});
 
-/** GET /:username - get detail of users.
- *
- * => {user: {username, first_name, last_name, phone, join_at, last_login_at}}
- *
- **/
+router.get("/username/from", ensureLoggedIn, async function (req, res, next) {
+    try {
+        let username = req.params.username
+        if (username) {
+            return Message.get(from_username);
+        }
+    } catch (e) {
+        return next(e)
+    }
+});
 
-
-/** GET /:username/to - get messages to user
- *
- * => {messages: [{id,
- *                 body,
- *                 sent_at,
- *                 read_at,
- *                 from_user: {username, first_name, last_name, phone}}, ...]}
- *
- **/
-
-
-/** GET /:username/from - get messages from user
- *
- * => {messages: [{id,
- *                 body,
- *                 sent_at,
- *                 read_at,
- *                 to_user: {username, first_name, last_name, phone}}, ...]}
- *
- **/
 
 module.exports = router;
