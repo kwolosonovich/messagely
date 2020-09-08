@@ -61,7 +61,7 @@ class User {
              phone
              FROM users`
     );
-    return result;
+    return result.rows;
   }
 
   /** Get: get user by username */
@@ -106,4 +106,4 @@ class User {
 }
 
 
-module.exports = User;
+module.exports = User;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
