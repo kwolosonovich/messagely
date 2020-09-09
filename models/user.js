@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const ExpressError = require("../expressError");
 
 const { BCRYPT_WORK_FACTOR } = require("../config");
+const { SECRET_KEY } = require("../config");
 
 /** User of the site. */
 
