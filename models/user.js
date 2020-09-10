@@ -37,7 +37,7 @@ class User {
       [username]
     );
     let inputPassword = result.rows[0].password;
-    return user && (await bcrypt.compare(password, inputPassword));
+    return result && (await bcrypt.compare(password, inputPassword));
   }
 
   /** Update last_login_at for user */
@@ -68,7 +68,7 @@ class User {
   /** Get: get user by username */
   static async get(username) {
     let result = await db.query(
-      `SELECT username, first_name, last_name, phone
+      `SELECT username, first_name, join_at, last_login_at, last_name, phone
         FROM users
         WHERE username = $1`,
       [username]
@@ -95,7 +95,17 @@ class User {
           WHERE from_username = $1`,
       [username]
     );
-    return result.rows[0];
+    return result.rows.map((m) => ({
+      id: m.id,
+      to_user: {
+        first_name: m.first_name,
+        last_name: m.last_name,
+        phone: m.phone,
+      },
+      body: m.body,
+      sent_at: m.sent_at,
+      read_at: m.read_at,
+    }));
   }
 
   /** Return messages to this user.*/
@@ -114,17 +124,17 @@ class User {
           WHERE to_username = $1`,
         [username]);
 
-    return result.rows.map(m => ({
+    return result.rows.map((m) => ({
       id: m.id,
       from_user: {
-        username: m.from_username,
         first_name: m.first_name,
         last_name: m.last_name,
         phone: m.phone,
+        username: m.from_username
       },
       body: m.body,
       sent_at: m.sent_at,
-      read_at: m.read_at
+      read_at: m.read_at,
     }));
   }
 }

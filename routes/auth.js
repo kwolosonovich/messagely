@@ -10,17 +10,19 @@ const router = new Router();
 /** POST /login - login: {username, password} => {token} **/
 router.post("/login", async function (req, res, next) {
     try {
-        let {username, password} = req.body
-        if (!username || !password) {
-            throw new ExpressError("Please enter username and password", 400)
-        } 
-        if (await User.authenticate(username, password)) {
-            let token = jwt.sign({username}, SECRET_KEY);
-            User.updateLoginTimestamp(username);
-            return res.json({token});
-        } else {
+      let { username, password } = req.body;
+      if (!username || !password) {
+        throw new ExpressError("Please enter username and password", 400);
+      }
+      if (await User.authenticate(username, password)) {
+        let token = jwt.sign({ username }, SECRET_KEY);
+        User.updateLoginTimestamp(username);
+        return res.json({ token });
+      } else {
         throw new ExpressError("Invalid username/password", 400);
-        }
+      }
+    } catch (err) {
+      return next(err);
     }
 })
 
