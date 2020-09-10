@@ -67,7 +67,7 @@ class User {
 
   /** Get: get user by username */
   static async get(username) {
-    let result = db.query(
+    let result = await db.query(
       `SELECT username, first_name, last_name, phone
         FROM users
         WHERE username = $1`,
