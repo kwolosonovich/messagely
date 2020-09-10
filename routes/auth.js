@@ -1,9 +1,7 @@
 const express = require("express");
 const Router = require("express").Router;
 const User = require("../models/user");
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { ensureLoggedIn, ensureCorrectUser } = require("../middleware/auth");
 const { SECRET_KEY } = require("../config");
 const ExpressError = require("../expressError");
 const router = new Router();
